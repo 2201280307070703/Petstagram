@@ -5,19 +5,14 @@ const mongoose = require('mongoose');
 const path = require('path');
 
 const expressConfig = require('./config/expressConfig');
+const handlebarsConfig = require('./config/handlebarsConfig');
 
 const routes = require('./routes');
 
 const app = express();
 
 expressConfig(app);
-
-app.engine('hbs', handlebars.engine({
-    extname: 'hbs'
-}));
-app.set('view engine', 'hbs');
-
-app.set('views', path.resolve(__dirname,'views'));
+handlebarsConfig(app);
 
 mongoose.connect('mongodb://127.0.0.1:27017/petstagram')
 .then(() => console.log('DB is connected!'));
