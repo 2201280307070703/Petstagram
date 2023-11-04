@@ -1,13 +1,16 @@
 const express = require('express');
 const handlebars = require('express-handlebars');
+const mongoose = require('mongoose');
+
 const path = require('path');
+
+const expressConfig = require('./config/expressConfig');
 
 const routes = require('./routes');
 
 const app = express();
 
-app.use('/static', express.static(path.resolve(__dirname,'public')));
-app.use(express.urlencoded({extended: false}));
+expressConfig(app);
 
 app.engine('hbs', handlebars.engine({
     extname: 'hbs'
@@ -15,6 +18,9 @@ app.engine('hbs', handlebars.engine({
 app.set('view engine', 'hbs');
 
 app.set('views', path.resolve(__dirname,'views'));
+
+mongoose.connect('mongodb://127.0.0.1:27017/petstagram')
+.then(() => console.log('DB is connected!'));
 
 app.use(routes);
 
