@@ -1,4 +1,5 @@
 const express = require('express');
+const cookieParser = require('cookie-parser');
 
 const expressConfig = require('./config/expressConfig');
 const handlebarsConfig = require('./config/handlebarsConfig');
@@ -18,7 +19,7 @@ dbConnect(uri)
 .catch(err => console.log('DB ERROR:' ,err.message));
 
 
-
+app.use(cookieParser());
 app.use(routes);
 
 app.listen(PORT, () => console.log(`Server is listening on port ${PORT}`));
