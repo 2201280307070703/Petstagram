@@ -6,7 +6,7 @@ const dbConnect = require('./config/mongooseConfig');
 
 const routes = require('./routes');
 
-const {PORT, uri} = require('./routes');
+const {PORT, uri} = require('./constants');
 
 const app = express();
 
