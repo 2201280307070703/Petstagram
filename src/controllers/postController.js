@@ -27,4 +27,10 @@ router.get('/:postId/details', async (req, res) => {
     res.render('posts/details', { post, isOwner });
 });
 
+router.get('/:postId/delete', async (req, res) => {
+    await postService.delete(req.params.postId);
+
+    res.redirect('/posts/catalog');
+});
+
 module.exports = router;
