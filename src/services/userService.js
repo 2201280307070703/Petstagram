@@ -13,7 +13,11 @@ exports.register = async ({ username, email, password, repeatPassword }) => {
         throw new Error('User exists!');
     }
 
-   await User.create({username, email, password, repeatPassword});
+  const newUser =  await User.create({username, email, password, repeatPassword});
+
+  const token = await generateToken(newUser);
+
+  return token;
 };
 
 exports.login = async ({ username, password}) => {
@@ -29,14 +33,20 @@ exports.login = async ({ username, password}) => {
         throw new Error('Wrong username or password!');
     }
 
+    const token = await generateToken( user );
+
+    return token;
+
+};
+
+async function generateToken ( user ){
     const payload = {
         _id: user._id,
         email: user.email,
         username: user.username
     };
 
-    const token = jwt.sign(payload, SECRET, {expiresIn: '2d'});
+    const token = await jwt.sign(payload, SECRET, {expiresIn: '2d'});
 
     return token;
-
-};
+}
