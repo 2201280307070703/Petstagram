@@ -16,7 +16,15 @@ router.post('/create', async (req, res) => {
 
 router.get('/catalog', async (req, res) => {
     const posts = await postService.getAll().lean();
-    res.render('posts/catalog',{ posts });
+    res.render('posts/catalog', { posts });
+});
+
+router.get('/:postId/details', async (req, res) => {
+    const post = await postService.getOne(req.params.postId).lean();
+
+    const isOwner = req.user?._id === post.owner._id.toString();
+
+    res.render('posts/details', { post, isOwner });
 });
 
 module.exports = router;
