@@ -33,4 +33,17 @@ router.get('/:postId/delete', async (req, res) => {
     res.redirect('/posts/catalog');
 });
 
+router.get('/:postId/edit', async (req, res) => {
+    const post = await postService.getOne(req.params.postId).lean();
+
+    res.render('posts/edit', {post});
+});
+
+router.post('/:postId/edit', async (req, res) => {
+    const updatedData = req.body;
+    const postId = req.params.postId;
+    
+    await postService.edit(postId, updatedData);
+    res.redirect(`/posts/${postId}/details`);
+})
 module.exports = router;

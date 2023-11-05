@@ -7,3 +7,4 @@ exports.getAll = () => Post.find({}).populate('owner');
 exports.getOne = (postId) => Post.findById(postId).populate('owner');
 
 exports.delete = (postId) => Post.findByIdAndDelete(postId);
+exports.edit = (postId, updatedData) => Post.findByIdAndUpdate(postId, updatedData);
