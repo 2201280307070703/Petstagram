@@ -1,8 +1,8 @@
 const jwt = require('../lib/jwt');
-const { SECRET } = require('../constants');
+const { SECRET, authorizationCookieName } = require('../constants');
 
 exports.auth = async (req, res, next) => {
-    const token = req.cookies['auth'];
+    const token = req.cookies[authorizationCookieName];
 
     if(token){
         try{
@@ -14,7 +14,7 @@ exports.auth = async (req, res, next) => {
 
             next();
         }catch(err){
-            res.clearCookie('auth');
+            res.clearCookie(authorizationCookieName);
 
             res.redirect('/users/login');
         }

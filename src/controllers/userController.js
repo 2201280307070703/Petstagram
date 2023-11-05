@@ -1,5 +1,6 @@
 const router = require('express').Router();
 
+const { authorizationCookieName } = require('../constants');
 const userService = require('../services/userService');
 
 router.get('/register', (req, res) => {
@@ -11,7 +12,7 @@ router.post('/register', async (req, res) => {
 
     const token = await userService.register({ username, email, password, repeatPassword });
 
-    res.cookie('auth', token, {httpOnly: true});
+    res.cookie(authorizationCookieName, token, {httpOnly: true});
 
     res.redirect('/');
 });
@@ -25,13 +26,13 @@ router.post('/login', async (req, res) => {
 
     const token = await userService.login({ username, password });
 
-    res.cookie('auth', token, {httpOnly: true});
+    res.cookie(authorizationCookieName, token, {httpOnly: true});
 
     res.redirect('/');
 });
 
 router.get('/logout', (req, res) => {
-    res.clearCookie('auth');
+    res.clearCookie(authorizationCookieName);
 
     res.redirect('/');
 });
