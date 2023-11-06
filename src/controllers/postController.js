@@ -1,22 +1,32 @@
 const router = require('express').Router();
 
+const { isAuth } = require('../middlewares/authMiddleware');
+const { getErrorMessage } = require('../utils/errorHelper');
 const postService = require('../services/postService');
 
-router.get('/create', (req, res) => {
+router.get('/create', isAuth, (req, res) => {
     res.render('posts/create');
 });
 
-router.post('/create', async (req, res) => {
+router.post('/create', isAuth, async (req, res) => {
     const postData = req.body;
     const ownerId = req.user._id;
 
-    await postService.create(postData, ownerId);
-    res.redirect('/posts/catalog');
+    try{
+        await postService.create(postData, ownerId);
+        res.redirect('/posts/catalog');
+    }catch(error){
+        res.render('posts/create', {errorMessage: getErrorMessage(error)});
+    }
 });
 
 router.get('/catalog', async (req, res) => {
-    const posts = await postService.getAll().lean();
-    res.render('posts/catalog', { posts });
+    try{
+        const posts = await postService.getAll().lean();
+        res.render('posts/catalog', { posts });
+    }catch(error){
+        res.status(500).redirect('/500');
+    }
 });
 
 router.get('/:postId/details', async (req, res) => {
@@ -27,19 +37,19 @@ router.get('/:postId/details', async (req, res) => {
     res.render('posts/details', { post, isOwner });
 });
 
-router.get('/:postId/delete', async (req, res) => {
+router.get('/:postId/delete', isAuth,  async (req, res) => {
     await postService.delete(req.params.postId);
 
     res.redirect('/posts/catalog');
 });
 
-router.get('/:postId/edit', async (req, res) => {
+router.get('/:postId/edit', isAuth,  async (req, res) => {
     const post = await postService.getOne(req.params.postId).lean();
 
     res.render('posts/edit', {post});
 });
 
-router.post('/:postId/edit', async (req, res) => {
+router.post('/:postId/edit', isAuth, async (req, res) => {
     const updatedData = req.body;
     const postId = req.params.postId;
     
