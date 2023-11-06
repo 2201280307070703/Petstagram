@@ -30,30 +30,70 @@ router.get('/catalog', async (req, res) => {
 });
 
 router.get('/:postId/details', async (req, res) => {
-    const post = await postService.getOne(req.params.postId).lean();
+    try{
+        const post = await postService.getOne(req.params.postId).lean();
 
-    const isOwner = req.user?._id === post.owner._id.toString();
-
-    res.render('posts/details', { post, isOwner });
+        const isOwner = isUserOwner(req.user?._id, post.owner._id.toString());
+    
+        res.render('posts/details', { post, isOwner });
+    }catch(error){
+        res.statusCode(500).redirect('/posts/catalog');
+    }
 });
 
 router.get('/:postId/delete', isAuth,  async (req, res) => {
-    await postService.delete(req.params.postId);
+   try{
+        const post = await postService.getOne(req.params.postId);
+        
+        const userIsOwner = isUserOwner(req.user._id, post.owner._id.toString());
+        if(userIsOwner){
+            await postService.delete(req.params.postId);
 
-    res.redirect('/posts/catalog');
+            res.redirect('/posts/catalog');
+        }else{
+            throw Error();
+        }
+    }catch(error){
+        res.status(404).redirect('/404');
+    }
 });
 
 router.get('/:postId/edit', isAuth,  async (req, res) => {
-    const post = await postService.getOne(req.params.postId).lean();
+    try{
+        const post = await postService.getOne(req.params.postId).lean();
 
-    res.render('posts/edit', {post});
+        const userIsOwner = isUserOwner(req.user._id, post.owner._id.toString());
+
+        if(userIsOwner){
+            res.render('posts/edit', {post});
+        }else{
+            throw Error();
+        }
+    }catch(error){
+        res.status(404).redirect('/404');
+    }
 });
 
 router.post('/:postId/edit', isAuth, async (req, res) => {
     const updatedData = req.body;
     const postId = req.params.postId;
-    
-    await postService.edit(postId, updatedData);
-    res.redirect(`/posts/${postId}/details`);
+    try{
+        const post = await postService.getOne(postId);
+        
+        const userIsOwner = isUserOwner(req.user._id, post.owner._id.toString());
+
+        if(userIsOwner){
+            await postService.edit(postId, updatedData);
+            res.redirect(`/posts/${postId}/details`);
+        }else{
+            throw Error();
+        }
+    }catch(eroor){
+        res.status(404).redirect('/404');
+    }
 })
+
+function isUserOwner(userId, ownerId){
+    return userId === ownerId;
+}
 module.exports = router;
