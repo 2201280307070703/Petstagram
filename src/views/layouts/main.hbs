@@ -8,15 +8,13 @@
 
 
 <body>
-    <!--Error Container-->
-
-    <!-- <div>
+    {{#if errorMessage}}
+     <div>
         <div class="errorContainer">
-            <p>Error</p>
+            <p>{{errorMessage}}</p>
         </div>
-    </div> -->
-
-    <!-- Starts Header Section with Navigation Bar -->
+    </div> 
+    {{/if}}
     <header>
         <nav class="navbar">
             <div class="container">
