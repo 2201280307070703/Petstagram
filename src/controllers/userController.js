@@ -4,6 +4,7 @@ const { authorizationCookieName } = require('../constants');
 const {isAuth } = require('../middlewares/authMiddleware');
 const { getErrorMessage } = require('../utils/errorHelper');
 const userService = require('../services/userService');
+const postService = require('../services/postService');
 
 router.get('/register', (req, res) => {
     res.render('users/register');
@@ -54,9 +55,13 @@ router.get('/logout', isAuth, (req, res) => {
 router.get('/profile', isAuth, async (req, res) => {
     const userId = req.user._id;
     try{
-        const user = await userService.getOne(userId).lean();
+        const posts = await postService.getAllByUserId(userId).lean();
 
-        res.render('users/profile', {user});
+        const owner = await userService.getOne(userId).lean();
+
+        const postsCount = posts.length;
+
+        res.render('users/profile', {posts, owner, postsCount});
     }catch(error){
         res.status(404).redirect('/404');
     }
