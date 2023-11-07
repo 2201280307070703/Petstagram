@@ -68,6 +68,7 @@
                     </div>
                     <div class="comments">
                         <div class="comments-top">
+                            {{#each post.comments}}
                             <div class="userDetails">
                                 <div class="comment-data">
                                     <div class="profilepic">
@@ -80,46 +81,17 @@
                                     </div>
 
                                     <!--User's username-->
-                                    <p><b>StevIvanov</b>- OMG where can i get one</p>
+                                    <p><b>{{userId.username}}</b>- {{comment}}</p>
                                 </div>
                             </div>
-                            <div class="userDetails">
-                                <div class="comment-data">
-                                    <div class="profilepic">
-                                        <div class="profile_img">
-                                            <div class="image">
-                                                <!-- User Profile Image -->
-                                                <img src="/static/images/person.png" alt="img8">
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <!--User's username-->
-                                    <p><b>StevIvanov</b>- OMG where can i get one</p>
-                                </div>
-                            </div>
-                            <div class="userDetails">
-                                <div class="comment-data">
-                                    <div class="profilepic">
-                                        <div class="profile_img">
-                                            <div class="image">
-                                                <!-- User Profile Image -->
-                                                <img src="/static/images/person.png" alt="img8">
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <!--User's username-->
-                                    <p><b>StevIvanov</b>- OMG where can i get one</p>
-                                </div>
-                            </div>
+                            {{/each}}
                         </div>
                     </div>
                 </div>
                 {{#if isAuthenticated}}
                 <div class="addComments">
-                    <form method="#" action="#">
-                        <textarea id="comment-textarea" name="" cols="40" rows="10"
+                    <form method="POST" action="/posts/{{post._id}}/comment">
+                        <textarea id="comment-textarea" name="message" cols="40" rows="10"
                             placeholder="Add comment..."></textarea>
                         <button type="submit">Post</button>
                     </form>

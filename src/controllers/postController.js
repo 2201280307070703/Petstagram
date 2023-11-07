@@ -37,7 +37,7 @@ router.get('/:postId/details', async (req, res) => {
     
         res.render('posts/details', { post, isOwner });
     }catch(error){
-        res.statusCode(500).redirect('/posts/catalog');
+        res.status(500).redirect('/posts/catalog');
     }
 });
 
@@ -91,7 +91,23 @@ router.post('/:postId/edit', isAuth, async (req, res) => {
     }catch(eroor){
         res.status(404).redirect('/404');
     }
-})
+});
+
+router.post('/:postId/comment', isAuth, async (req, res) => {
+    const postId = req.params.postId;
+    const userId = req.user._id;
+    const { message } = req.body;
+
+    try{
+        const post = await postService.getOne(postId);
+
+        await postService.comment(postId, userId, message);
+
+        res.redirect(`/posts/${postId}/details`);
+    }catch(error){
+        res.render('posts/details', {post, errorMessage: getErrorMessage(error)});
+    }
+});
 
 function isUserOwner(userId, ownerId){
     return userId === ownerId;

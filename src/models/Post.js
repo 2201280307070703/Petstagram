@@ -21,6 +21,20 @@ const postSchema = new mongoose.Schema({
         type: String,
         required: [true, 'Location is required!']
     },
+    comments: 
+        [
+            {
+                userId: {
+                    type: mongoose.Types.ObjectId,
+                    ref: 'User',
+                    required: true
+                },
+                comment: {
+                    type: String,
+                    required: true
+                }
+            }
+        ],
     owner: {
         type: mongoose.Types.ObjectId,
         ref: 'User'
