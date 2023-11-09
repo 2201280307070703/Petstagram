@@ -67,4 +67,20 @@ router.get('/profile', isAuth, async (req, res) => {
     }
 });
 
+router.get('/:userId/profile', isAuth, async (req, res) => {
+    const userId = req.params.userId;
+    try{
+        const posts = await postService.getAllByUserId(userId).lean();
+
+        const owner = await userService.getOne(userId).lean();
+
+        const postsCount = posts.length;
+
+        res.render('users/profile', {posts, owner, postsCount});
+    }catch(error){
+        res.status(404).redirect('/404');
+    }
+});
+
+
 module.exports = router;
